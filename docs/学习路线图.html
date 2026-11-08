@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>大模型应用开发学习路线图</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    width: 1600px;
+    font-family: "PingFang SC", "Hiragino Sans GB", "STHeiti", sans-serif;
+    background: #f4f6fb;
+    color: #1f2937;
+    padding: 40px 48px 36px;
+  }
+  header { margin-bottom: 26px; }
+  h1 { font-size: 38px; font-weight: 700; letter-spacing: 1px; }
+  .sub { margin-top: 10px; font-size: 18px; color: #4b5563; }
+  .sub b { color: #111827; }
+  .legend { margin-top: 14px; display: flex; gap: 18px; font-size: 15px; color: #374151; }
+  .legend span::before {
+    content: ""; display: inline-block; width: 14px; height: 14px; border-radius: 3px;
+    margin-right: 6px; vertical-align: -2px; background: var(--c);
+  }
+
+  .timeline { position: relative; padding-left: 190px; }
+  .timeline::before {
+    content: ""; position: absolute; left: 160px; top: 8px; bottom: 8px;
+    width: 4px; background: #cbd5e1; border-radius: 2px;
+  }
+
+  .phase { position: relative; margin-bottom: 14px; }
+  .phase .date {
+    position: absolute; left: -190px; top: 14px; width: 140px; text-align: right;
+    font-size: 15px; color: #4b5563; line-height: 1.5;
+  }
+  .phase .date b { display: block; font-size: 17px; color: #111827; }
+  .phase .dot {
+    position: absolute; left: -38px; top: 22px; width: 20px; height: 20px; border-radius: 50%;
+    background: var(--c); border: 4px solid #f4f6fb; box-shadow: 0 0 0 2px var(--c);
+  }
+  .card {
+    background: #fff; border-radius: 12px; border-left: 8px solid var(--c);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+    display: grid; grid-template-columns: 290px 1fr 330px; gap: 20px;
+    padding: 16px 22px;
+  }
+  .title .tag {
+    display: inline-block; font-size: 14px; font-weight: 700; color: #fff; background: var(--c);
+    padding: 2px 10px; border-radius: 10px; margin-bottom: 6px;
+  }
+  .title h2 { font-size: 21px; line-height: 1.35; }
+  .title .proj { margin-top: 6px; font-size: 14px; color: var(--c); font-weight: 600; }
+  .title .done {
+    margin-top: 6px; font-size: 13px; color: #166534; background: #dcfce7;
+    display: inline-block; padding: 2px 8px; border-radius: 6px;
+  }
+  .skills { display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; padding-top: 2px; }
+  .skills span {
+    font-size: 15px; padding: 4px 11px; border-radius: 6px;
+    background: var(--bg); color: #1f2937; border: 1px solid var(--bd);
+  }
+  .out { font-size: 15px; line-height: 1.6; border-left: 1px dashed #d1d5db; padding-left: 18px; }
+  .out .k { font-size: 13px; font-weight: 700; color: #6b7280; letter-spacing: 1px; }
+  .out p { margin-bottom: 4px; }
+
+  .milestone { position: relative; margin: 4px 0 18px; }
+  .milestone .diamond {
+    position: absolute; left: -40px; top: 6px; width: 24px; height: 24px;
+    background: var(--c); transform: rotate(45deg); border: 3px solid #f4f6fb;
+  }
+  .milestone .date {
+    position: absolute; left: -190px; top: 6px; width: 140px; text-align: right;
+    font-size: 16px; font-weight: 700; color: var(--c);
+  }
+  .milestone .txt {
+    display: inline-block; font-size: 17px; font-weight: 700; color: var(--c);
+    background: var(--bg); border: 2px dashed var(--c); border-radius: 8px; padding: 6px 16px;
+  }
+
+  .bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 22px; }
+  .box { background: #fff; border-radius: 12px; padding: 18px 22px; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06); }
+  .box h3 { font-size: 19px; margin-bottom: 12px; }
+  .always { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 18px; font-size: 15px; }
+  .always div::before { content: "●"; color: #0ea5e9; margin-right: 8px; }
+  .always b { color: #111827; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  td { padding: 7px 6px; border-bottom: 1px solid #eef0f4; vertical-align: top; }
+  td:first-child { font-weight: 700; white-space: nowrap; width: 150px; }
+  td:last-child { color: #4b5563; white-space: nowrap; text-align: right; }
+  footer { margin-top: 16px; font-size: 13px; color: #6b7280; }
+
+  .c-base { --c: #475569; --bg: #f1f5f9; --bd: #cbd5e1; }
+  .c-llm  { --c: #2563eb; --bg: #eff6ff; --bd: #bfdbfe; }
+  .c-p1   { --c: #059669; --bg: #ecfdf5; --bd: #a7f3d0; }
+  .c-p2   { --c: #7c3aed; --bg: #f5f3ff; --bd: #ddd6fe; }
+  .c-dep  { --c: #d97706; --bg: #fffbeb; --bd: #fde68a; }
+  .c-p3   { --c: #dc2626; --bg: #fef2f2; --bd: #fecaca; }
+  .c-ms   { --c: #db2777; --bg: #fdf2f8; }
+  .c-cny  { --c: #9ca3af; --bg: #f9fafb; }
+</style>
+</head>
+<body>
+<header>
+  <h1>大模型应用开发学习路线图（Qt/C++ 工程师转型版）</h1>
+  <p class="sub">周期 <b>2026-11-09 至 2027-05-16，共 27 周</b>，每周 15-20 小时 ｜ <b>2027-03-15 开始投递</b>（金三银四） ｜ 目标岗位：AI 应用工程师、Agent 开发工程师、端侧 / AI 客户端</p>
+  <div class="legend">
+    <span class="c-base">工程基础</span>
+    <span class="c-llm">模型与 Agent 基础</span>
+    <span class="c-p1">项目 1：知识库 RAG</span>
+    <span class="c-p2">项目 2：多 Agent 系统</span>
+    <span class="c-dep">部署与微调</span>
+    <span class="c-p3">项目 3：Qt 端侧助手</span>
+    <span class="c-ms">求职节点</span>
+  </div>
+</header>
+
+<section class="timeline">
+
+  <div class="phase c-base">
+    <div class="date"><b>第 1-3 周</b>11/09 - 11/29</div><div class="dot"></div>
+    <div class="card">
+      <div class="title"><span class="tag">P0</span><h2>Python 进阶与后端基础</h2></div>
+      <div class="skills">
+        <span>生成器 / 装饰器 / 类型标注</span><span>asyncio（对照 QEventLoop）</span><span>Pydantic v2</span>
+        <span>uv · ruff · pytest</span><span>FastAPI + SSE 流式</span><span>PostgreSQL · Redis</span><span>Docker / compose</span>
+      </div>
+      <div class="out"><p class="k">交付物</p><p>异步 FastAPI 服务 + 数据库，一键启动</p><p class="k">面试重点</p><p>GIL、协程与线程、生成器</p></div>
+    </div>
+  </div>
+
+  <div class="phase c-llm">
+    <div class="date"><b>第 4-6 周</b>11/30 - 12/20</div><div class="dot"></div>
+    <div class="card">
+      <div class="title"><span class="tag">P1</span><h2>大模型原理与模型集成</h2></div>
+      <div class="skills">
+        <span>Tokenizer / BPE</span><span>Attention · RoPE</span><span>KV Cache</span><span>MoE · 推理模型</span>
+        <span>结构化输出</span><span>工具调用 · 流式</span><span>重试 / 降级 / 缓存</span><span>Token 成本估算</span><span>多厂商抽象</span>
+      </div>
+      <div class="out"><p class="k">交付物</p><p>llm_gateway：统一多模型网关</p><p class="k">面试重点</p><p>√d 缩放、KV Cache、稳定输出 JSON</p></div>
+    </div>
+  </div>
+
+  <div class="phase c-llm">
+    <div class="date"><b>第 7-8 周</b>12/21 - 01/03</div><div class="dot"></div>
+    <div class="card">
+      <div class="title"><span class="tag">P2</span><h2>Prompt 与上下文工程<br>Agent 四大机制</h2><span class="done">已预习：ReAct、Function Calling</span></div>
+      <div class="skills">
+        <span>Prompt 工程 · 工具描述</span><span>上下文工程</span><span>上下文压缩</span>
+        <span>Planning</span><span>Memory</span><span>Tool Use</span><span>Reflection</span><span>死循环与容错</span><span>人工确认</span>
+      </div>
+      <div class="out"><p class="k">交付物</p><p>不依赖框架的 mini_agent + 复盘博客</p><p class="k">面试重点</p><p>ReAct 与 Function Calling 的区别、长期记忆设计</p></div>
+    </div>
+  </div>
+
+  <div class="phase c-p1">
+    <div class="date"><b>第 9-12 周</b>01/04 - 01/31</div><div class="dot"></div>
+    <div class="card">
+      <div class="title"><span class="tag">P3</span><h2>RAG 深入</h2><p class="proj">项目 1 v1：企业知识库问答</p></div>
+      <div class="skills">
+        <span>文档解析 / OCR</span><span>切分策略 · 父子块</span><span>Embedding 选型</span><span>Milvus / pgvector</span>
+        <span>BM25 + 向量 + RRF</span><span>Rerank</span><span>查询改写 · HyDE</span><span>GraphRAG / 知识图谱</span><span>Agentic RAG</span><span>引用溯源</span>
+      </div>
+      <div class="out"><p class="k">交付物</p><p>知识库问答 v1 + 检索消融实验</p><p class="k">面试重点</p><p>RAG 效果差的排查顺序、为什么要 Rerank</p></div>
+    </div>
+  </div>
+
+  <div class="phase c-p1">
+    <div class="date"><b>第 13-14 周</b>02/01 - 02/14</div><div class="dot"></div>
+    <div class="card">
+      <div class="title"><span class="tag">P4</span><h2>评测、安全护栏、可观测性</h2><p class="proj">项目 1 v2</p></div>
+      <div class="skills">
+        <span>黄金数据集</span><span>LLM 打分 + 人工校准</span><span>RAGAS · promptfoo</span><span>CI 评测关卡</span>
+        <span>Prompt 注入防护</span><span>PII 脱敏 · 审计日志</span><span>Langfuse 链路追踪</span><span>功能级成本统计</span>
+      </div>
+      <div class="out"><p class="k">交付物</p><p>200+ 条评测集 + 评测报告</p><p class="k">面试重点</p><p>通过率 94%→96% 能上线吗？间接注入怎么防？</p></div>
+    </div>
+  </div>
+
+  <div class="milestone c-cny">
+    <div class="date">02/15 - 02/21</div><div class="diamond"></div>
+    <span class="txt">春节缓冲周：补进度 / 复习</span>
+  </div>
+
+  <div class="phase c-p2">
+    <div class="date"><b>第 15-19 周</b>02/22 - 03/28</div><div class="dot"></div>
+    <div class="card">
+      <div class="title"><span class="tag">P5</span><h2>LangGraph、多 Agent、MCP</h2><p class="proj">项目 2：多 Agent 研究助手</p></div>
+      <div class="skills">
+        <span>State · Checkpoint</span><span>Human-in-the-loop</span><span>Supervisor / Handoff</span><span>AutoGen · CrewAI 对比</span>
+        <span>MCP Server / Client</span><span>Docker 代码沙箱</span><span>Agent 轨迹评测</span><span>成本路由</span>
+      </div>
+      <div class="out"><p class="k">交付物</p><p>可演示的多 Agent 系统 + Agent 评测集</p><p class="k">面试重点</p><p>为什么选 LangGraph、崩溃后如何恢复</p></div>
+    </div>
+  </div>
+
+  <div class="milestone c-ms">
+    <div class="date">03/15</div><div class="diamond"></div>
+    <span class="txt">简历 v1（项目 1 + 项目 2），开始投递：先中小公司练手，再投目标公司</span>
+  </div>
+
+  <div class="phase c-dep">
+    <div class="date"><b>第 20-22 周</b>03/29 - 04/18</div><div class="dot"></div>
+    <div class="card">
+      <div class="title"><span class="tag">P6</span><h2>推理部署与微调</h2></div>
+      <div class="skills">
+        <span>vLLM · PagedAttention</span><span>连续批处理</span><span>GGUF / AWQ / GPTQ</span>
+        <span>显存估算</span><span>LoRA / QLoRA SFT</span><span>RAG 与微调怎么选</span>
+      </div>
+      <div class="out"><p class="k">交付物</p><p>vLLM 部署量化模型 + 压测报告</p><p class="k">面试重点</p><p>7B 模型显存估算、vLLM 为什么快</p></div>
+    </div>
+  </div>
+
+  <div class="phase c-p3">
+    <div class="date"><b>第 23-26 周</b>04/19 - 05/16</div><div class="dot"></div>
+    <div class="card">
+      <div class="title"><span class="tag">P7</span><h2>Qt/C++ 端侧 AI 助手</h2><p class="proj">项目 3：你的差异化优势</p></div>
+      <div class="skills">
+        <span>llama.cpp C++ API</span><span>Qt 流式 Markdown 渲染</span><span>端云自动切换</span>
+        <span>C++ MCP Client</span><span>量化等级对比</span><span>内存 · 首 token · tokens/s</span>
+      </div>
+      <div class="out"><p class="k">交付物</p><p>Qt AI 桌面助手 + 性能报告</p><p class="k">目标岗位</p><p>AI 客户端、端侧 AI、智能座舱</p></div>
+    </div>
+  </div>
+
+</section>
+
+<section class="bottom">
+  <div class="box">
+    <h3>贯穿全程</h3>
+    <div class="always">
+      <div><b>算法题</b>：每周 3-4 道（Python，Hot 100）</div>
+      <div><b>AI 编程工具</b>：每天用来完成整块任务</div>
+      <div><b>面试题</b>：每阶段结束时口头作答 + 点评</div>
+      <div><b>技术博客</b>：每个项目写一篇复盘</div>
+      <div><b>GitHub</b>：每周提交，README 附评测数据</div>
+      <div><b>跟进前沿</b>：每周 1 小时，关注模型和 API 变更</div>
+    </div>
+  </div>
+  <div class="box">
+    <h3>简历项目与对应岗位</h3>
+    <table>
+      <tr><td style="color:#059669">项目 1 知识库 RAG</td><td>RAG 全流程 · 评测 · 安全护栏 · 可观测</td><td>AI 应用工程师</td></tr>
+      <tr><td style="color:#7c3aed">项目 2 多 Agent</td><td>LangGraph · MCP · 沙箱 · 成本路由</td><td>Agent 开发工程师</td></tr>
+      <tr><td style="color:#dc2626">项目 3 Qt 端侧</td><td>C++ · llama.cpp · 端云协同 · 性能</td><td>端侧 / AI 客户端</td></tr>
+    </table>
+  </div>
+</section>
+
+<footer>依据：腾讯 2027 校招 Agent 开发工程师、AI 全栈工程师岗位要求；Andela 对近 5 万份 LLM 岗位招聘信息的分析（2026 年 10 月）。进度落后时优先压缩 P6、P7，P0 到 P5 为岗位必备内容。</footer>
+</body>
+</html>
