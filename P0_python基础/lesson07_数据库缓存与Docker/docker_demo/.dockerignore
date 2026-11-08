@@ -1,0 +1,13 @@
+# 这些文件不发送给 Docker（不进入构建上下文），镜像更小，也不会把密钥打进镜像
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+.git/
+.pytest_cache/
+.ruff_cache/
+*.db
+*.sqlite3
+Dockerfile
+.dockerignore

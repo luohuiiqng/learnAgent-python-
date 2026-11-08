@@ -1,0 +1,46 @@
+# 第七课用的 PostgreSQL 和 Redis。在本课目录执行：
+#   docker compose up -d      后台启动
+#   docker compose ps         看状态，STATUS 显示 healthy 才算就绪
+#   docker compose down       停止并删除容器，保留数据卷（数据还在）
+#   docker compose down -v    停止并删除容器和数据卷（数据清空）
+#
+# 账号密码只用于本地学习，不要用在任何对外的环境里。
+# 端口只绑定 127.0.0.1，局域网里的其他机器连不上。
+# 本机端口被占用时可以换端口，例如：REDIS_PORT=6380 docker compose up -d
+
+# 项目名。不写的话 compose 用目录名，而目录名里的中文不能用作项目名
+name: lesson07
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: learn
+      POSTGRES_PASSWORD: learn123
+      POSTGRES_DB: learn
+    ports:
+      - "127.0.0.1:${PG_PORT:-5432}:5432"   # 本机端口:容器端口
+    volumes:
+      - pgdata:/var/lib/postgresql/data      # 数据库文件放在命名数据卷里，删容器不丢数据
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U learn -d learn"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]   # 开启 AOF 持久化，数据写到 /data
+    ports:
+      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:
+  redisdata:
