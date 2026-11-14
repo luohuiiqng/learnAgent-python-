@@ -7,6 +7,7 @@
 - 这是练习不是考试，可以回看 README 和示例，但不要让 AI 替你写。
 - 不要用 copy.deepcopy 和 collections.Counter，用这节课学的基础写法完成。
 """
+import copy
 
 
 # 练习 1（P0-03）
@@ -18,7 +19,12 @@ def append_unique(item, items=None):
     append_unique(2)          -> [2]        （不能是 [1, 2]）
     append_unique(1, [1, 2])  -> [1, 2]
     """
-    raise NotImplementedError
+    if items is None:
+        items = [item]
+    if  item not in items:
+        items.append(item)
+    return items
+            
 
 
 # 练习 2（P0-02）
@@ -28,7 +34,22 @@ def word_freq(text):
     word_freq("Qt qt  Python") -> {"qt": 2, "python": 1}
     word_freq("")              -> {}
     """
-    raise NotImplementedError
+    if text == "" or text == None:
+        return {}
+    low_text = text.lower()
+    strs = " ".join(low_text.split())
+    strs = strs.split(' ')
+    #4.统计句中每个词出现的次数
+    list = {}
+    for str in strs:
+        if str == '':
+            continue
+        if list.get(str) == None :
+            list[str] = 1
+        else:
+            list[str] += 1
+    return list        
+
 
 
 # 练习 3（P0-02）
@@ -38,7 +59,15 @@ def group_by_first_letter(words):
     group_by_first_letter(["Qt", "python", "qml", "", "Pydantic"])
     -> {"q": ["Qt", "qml"], "p": ["python", "Pydantic"]}
     """
-    raise NotImplementedError
+    q_dict = {}
+    for k_str in words:
+        q_str = k_str.lower()
+        if q_str != "":
+            if q_str[0] not in q_dict:
+                q_dict[q_str[0]] = [k_str]
+            else:
+                q_dict[q_str[0]].append(k_str)
+    return q_dict
 
 
 # 练习 4（P0-01）
@@ -48,8 +77,16 @@ def make_grid(rows, cols, fill=0):
 
     make_grid(2, 3) -> [[0, 0, 0], [0, 0, 0]]
     """
-    raise NotImplementedError
+    return [[fill for _ in range(cols)] for _ in range(rows)]
 
+def copy_config(str_src):
+    output = {}
+    if isinstance(str_src,dict):
+        for key in str_src:
+             output[key] = copy_config(str_src[key])
+    else:
+        output = str_src
+    return output
 
 # 练习 5（P0-01，较难）
 def merge_config(base, override):
@@ -64,7 +101,22 @@ def merge_config(base, override):
                  {"llm": {"temperature": 0}, "debug": True})
     -> {"llm": {"model": "qwen", "temperature": 0}, "debug": True}
     """
-    raise NotImplementedError
+    print(f"base:{base}. override:{override}")
+    print("===========")
+    c_base = copy_config(base)
+    c_override = copy_config(override)
+    if type(base) != type(override) or type(base) != dict:
+        return c_override
+
+    for cb_base in c_base:
+        if cb_base in c_override:
+            if  isinstance(c_base.get(cb_base),dict) and c_override.get(cb_base) != None:
+                c_override[cb_base] = merge_config(c_base.get(cb_base),c_override.get(cb_base))
+        else:
+            c_override[cb_base] = c_base.get(cb_base)
+    print(f"c_override: {c_override}")
+    return c_override
+
 
 
 # 练习 6（P0-03）
@@ -77,7 +129,15 @@ def call_tool(registry, name, arguments):
 
     call_tool({"add": lambda a, b: a + b}, "add", {"a": 1, "b": 2}) -> "3"
     """
-    raise NotImplementedError
+    func = registry.get(name)
+    if func is None:
+        return f"错误：未知工具 {name}"
+    try:
+        result = func(**arguments)
+        print(f"re:{str(result)}")
+        return str(result)
+    except TypeError:
+        return "错误：参数不匹配"
 
 
 # ---------------------------------------------------------------------------

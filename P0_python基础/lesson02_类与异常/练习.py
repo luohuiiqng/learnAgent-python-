@@ -12,6 +12,22 @@ from abc import ABC, abstractmethod  # noqa: F401  练习 4 会用到
 from dataclasses import dataclass, field  # noqa: F401  练习 3 会用到
 
 
+
+def deep_copy(str_src):
+    output = None
+    if isinstance(str_src,dict):
+        output = {}
+        for key in str_src:
+             output[key] = deep_copy(str_src[key])
+    else:
+        output = str_src
+
+    if isinstance(str_src,list):
+        output = []
+        for value in str_src:
+             output.append(deep_copy(value))
+    return output
+
 # 练习 1（P0-05）
 class ChatHistory:
     """保存一段对话的消息，每条消息是 {"role": ..., "content": ...} 形式的 dict。
@@ -34,23 +50,48 @@ class ChatHistory:
     ROLES = ("system", "user", "assistant", "tool")
 
     def __init__(self, system_prompt=None):
-        raise NotImplementedError
+        self.chats = []
+        if system_prompt is not None:
+            self.chats.append({"role":"system","content":system_prompt})
 
     def add(self, role, content):
-        raise NotImplementedError
+        if role not in ChatHistory.ROLES:
+            raise ValueError
+        chat = {
+            "role":role,
+            "content":content
+        }            
+        self.chats.append(chat)
 
     def to_list(self):
-        raise NotImplementedError
+        return deep_copy(self.chats)
 
     def __len__(self):
-        raise NotImplementedError
+        return len(self.chats)
 
     def __getitem__(self, index):
-        raise NotImplementedError
+        if index == -1 and len(self.chats) != 0:
+            return self.chats[len(self.chats)-1]
+        if isinstance(index,slice):
+            return self.chats[index]
+        if(len(self.chats)<index):
+            return None
+        return self.chats[index]
 
     @classmethod
     def from_pairs(cls, pairs):
-        raise NotImplementedError
+        # print(f"pairs type:{type(pairs)},pairs value:{pairs}")
+        # chathistory = ChatHistory()
+        # for role,value in pairs:
+        #     chathistory.add(role,value)
+        # return cls(chathistory)
+        history = cls()
+        for role,value in pairs:
+            history.add(role,value)
+        return history
+            
+
+
 
 
 # 练习 2（P0-05）
@@ -262,7 +303,6 @@ def _check_chat_history():
     assert len(h2) == 0, "新建的对象里已经有消息：消息列表是不是写成了类属性，被所有实例共享了？"
     assert len(h1) == 1
     assert h1[0] == {"role": "user", "content": "你好"}
-
     h3 = ChatHistory("你是助手")
     assert len(h3) == 1 and h3[0] == {"role": "system", "content": "你是助手"}, "传了 system_prompt 时应该先放一条 system 消息"
     h3.add("user", "a")
@@ -281,9 +321,9 @@ def _check_chat_history():
 
     class MyHistory(ChatHistory):
         pass
-
     h4 = MyHistory.from_pairs([("system", "s"), ("user", "u")])
     assert type(h4) is MyHistory, "子类调用 from_pairs 应该返回子类对象：用 cls(...) 创建，不要写死类名"
+    print(f"==========h4.to_list() :{h4.to_list() }")
     assert h4.to_list() == [{"role": "system", "content": "s"}, {"role": "user", "content": "u"}]
     assert len(ChatHistory.from_pairs([])) == 0
 
