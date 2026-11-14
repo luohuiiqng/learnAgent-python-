@@ -36,4 +36,15 @@ for epoch in range(100):
 
     optimizer.zero_grad()
     loss.backward()
-    optimizer.step()
+    optimizer.step()  
+
+#打印训练结果
+print('w = ',model.linera.weight.item())
+print('b = ',model.linera.bias.item())
+
+
+#测试模型
+x_test = torch.Tensor([[4.0]])
+y_test = model(x_test)
+
+print('y_pred = ',y_test.data)
